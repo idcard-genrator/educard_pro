@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="display:flex; justify-content:center; margin-top:40px;">
+
+    <!-- ================= ID CARD START ================= -->
+    <div class="print-card" style="
+        width:340px;
+        background:white;
+        color:black;
+        border-radius:15px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.2);
+        overflow:hidden;
+        font-family:Arial, sans-serif;
+    ">
+
+        <!-- HEADER -->
+        <div style="
+            background: linear-gradient(135deg, #004aad, #00c6ff);
+            color:white;
+            padding:15px 20px;
+            display:flex;
+            align-items:center;
+        ">
+
+            <img src="{{ url_for('static', filename='logo.png') }}"
+                style="width:60px; height:55px; margin-right:15px; background:white; padding:3px; border-radius:8px;">
+
+            <div>
+                <h2 style="margin:0; font-size:18px;">
+                    {{ student.school.school_name }}
+                </h2>
+                <p style="margin:2px 0 0 0; font-size:12px;">
+                    STUDENT ID CARD
+                </p>
+            </div>
+        </div>
+
+        <!-- PHOTO -->
+        <div style="text-align:center; margin-top:15px;">
+            <img src="{{ url_for('static', filename='uploads/' + student.photo) }}"
+                 style="width:100px; height:110px; border-radius:8px; border:2px solid #004aad;">
+        </div>
+
+        <!-- STUDENT DETAILS -->
+        <div style="
+            margin:15px;
+            font-size:14px;
+            color:#004aad;
+        ">
+
+            <p><strong>Name:</strong> {{ student.name }}</p>
+            <p><strong>Father Name:</strong> {{ student.father_name }}</p>
+            <p><strong>Class:</strong> {{ student.student_class }}</p>
+            <p><strong>Roll No:</strong> {{ student.roll_no }}</p>
+            <p><strong>Mobile:</strong> {{ student.mobile }}</p>
+            <p><strong>Address:</strong> {{ student.address }}</p>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div style="
+            text-align:center;
+            font-size:12px;
+            padding:10px;
+            background:#f2f2f2;
+        ">
+            Academic Session 2026-27
+        </div>
+
+    </div>
+    <!-- ================= ID CARD END ================= -->
+
+</div>
+
+
+<!-- ================= BUTTONS OUTSIDE CARD ================= -->
+
+<div style="text-align:center; margin-top:20px;">
+
+    <!-- PRINT BUTTON -->
+    <button onclick="window.print()" style="
+        padding:8px 15px;
+        background:#004aad;
+        color:white;
+        border:none;
+        border-radius:5px;
+        cursor:pointer;
+        margin-right:10px;
+    ">
+        Print ID Card
+    </button>
+
+    <!-- DOWNLOAD PDF BUTTON -->
+    <a href="{{ url_for('main.download_id_card', student_id=student.id) }}">
+        <button style="
+            padding:8px 15px;
+            background:#00a86b;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        ">
+            Download PDF
+        </button>
+    </a>
+
+</div>
+
+
+<!-- ================= PRINT CSS ================= -->
+
+<style>
+@media print {
+
+    body * {
+        visibility: hidden;
+    }
+
+    .print-card, .print-card * {
+        visibility: visible;
+    }
+
+    .print-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-shadow: none;
+    }
+
+    button {
+        display: none;
+    }
+}
+</style>
+
+{% endblock %}

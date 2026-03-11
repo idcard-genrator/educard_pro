@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Edit Student</h2>
+
+<form method="POST" enctype="multipart/form-data">
+
+    <input type="text" name="name" value="{{ student.name }}" placeholder="Name" required><br>
+
+    <input type="text" name="student_class" value="{{ student.student_class }}" placeholder="Class" required><br>
+
+    <input type="text" name="roll_no" value="{{ student.roll_no }}" placeholder="Roll No" required><br>
+
+    <input type="file" name="photo"><br>
+
+    <button type="submit">Update</button>
+
+</form>
+
+{% endblock %}

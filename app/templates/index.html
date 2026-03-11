@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ID Card Generator</title>
+</head>
+<body>
+    <h2>Create ID Card</h2>
+    <form action="/generate" method="POST" enctype="multipart/form-data">
+        Name: <input type="text" name="name" required><br><br>
+        Course: <input type="text" name="course" required><br><br>
+        Photo: <input type="file" name="photo" required><br><br>
+        <button type="submit">Generate ID Card</button>
+    </form>
+</body>
+</html>

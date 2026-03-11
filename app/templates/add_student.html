@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    font-family: Arial, sans-serif;
+}
+
+.form-container {
+    width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    animation: fadeIn 1s ease-in-out;
+}
+
+h2 {
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #ff512f, #dd2476);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.view-btn {
+    margin-top: 15px;
+    background: linear-gradient(45deg, #11998e, #38ef7d);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<div class="form-container">
+    <h2>Add Student</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="Student Name" required>
+        <input type="text" name="father_name" placeholder="Father Name" required>
+        <input type="text" name="student_class" placeholder="Class" required>
+        <input type="text" name="roll_no" placeholder="Roll No" required>
+        <input type="text" name="address" placeholder="Address" required>
+        <input type="text" name="mobile" placeholder="Mobile Number" required>
+        <input type="text" name="school_name" placeholder="school Name" required>
+        <input type="file" name="photo">
+
+        <button type="submit">Add Student 🚀</button>
+    </form>
+
+    
+    <a href="{{ url_for('main.view_students') }}">
+        <button class="view-btn">View Student List 📋</button>
+    </a>
+</div>
+
+{% endblock %}
