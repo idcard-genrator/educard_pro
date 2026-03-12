@@ -4,7 +4,6 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from werkzeug.utils import secure_filename
 from . import db
 from .models import Student,School
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import inch
@@ -63,6 +62,8 @@ def add_student():
 
 @main.route('/download-id-card/<int:student_id>')
 def download_id_card(student_id):
+
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 
     student = Student.query.get_or_404(student_id)
 
