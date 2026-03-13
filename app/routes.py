@@ -1,5 +1,4 @@
 from flask import render_template, request, redirect, url_for, flash, make_response, current_app
-from app import main
 from app.models import Student
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.pagesizes import A4
