@@ -21,8 +21,8 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = "login"  # change as per your login route
 
-    # Import routes here to avoid circular imports
-    with app.app_context():
-        from . import routes
-
+    # Register Blueprints
+    from.routes import main
+    app.register_blueprint(main)
+    
     return app

@@ -1,80 +1,63 @@
-from flask import render_template, request, redirect, url_for, flash, make_response, current_app
-from app.models import Student
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+# app/routes.py
+from flask import Blueprint, render_template, request, send_file
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
 import os
-from io import BytesIO
+from .models import Student
 
-# Dusra route - add student
+main = Blueprint('main', __name__)
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+@main.route('/')
+def index():
+    return render_template('index.html')
+
 @main.route('/add-student', methods=['GET', 'POST'])
 def add_student():
-    return render_template("add_student.html")
-
-
-# View students route
-@main.route('/view-students')
-def view_students():
-    students = Student.query.all()
-    return render_template("view_students.html", students=students)
-
-
-# Edit student route
-@main.route('/edit-student/<int:student_id>', methods=['GET', 'POST'])
-def edit_student(student_id):
-    student = Student.query.get_or_404(student_id)
+    # Example logic for adding student
     if request.method == 'POST':
-        student.name = request.form['name']
-        student.class_name = request.form['class_name']
-        # Add more fields as required
-        # db.session.commit()  # Don't forget to commit changes in real code
-        flash('Student updated successfully!', 'success')
-        return redirect(url_for('main.view_students'))
-    return render_template("edit_student.html", student=student)
+        # Fetch data from form
+        name = request.form['name']
+        photo_file = request.files['photo']
 
+        # Save photo in static/uploads
+        photo_path = os.path.join(BASE_DIR, '..', 'static', 'uploads', photo_file.filename)
+        photo_file.save(photo_path)
 
-# 👇 ID Card PDF Download route
-@main.route('/download-id-card/<int:student_id>')
-def download_id_card(student_id):
+        # Save student to DB (if you have DB logic)
+        student = Student(name=name, photo=photo_file.filename)
+        from . import db
+        db.session.add(student)
+        db.session.commit()
+
+        return "Student added successfully!"
+    return render_template('add_student.html')
+
+@main.route('/generate-pdf/<int:student_id>')
+def generate_pdf(student_id):
+    from . import db
     student = Student.query.get_or_404(student_id)
 
-    from io import BytesIO
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
-    from reportlab.lib.pagesizes import A4
-    from reportlab.lib.styles import getSampleStyleSheet
-    import os
-
-    buffer = BytesIO()
-    pdf = SimpleDocTemplate(buffer, pagesize=A4)
+    pdf_path = os.path.join(BASE_DIR, '..', 'id_card_{}.pdf'.format(student.id))
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
     elements = []
 
-    styles = getSampleStyleSheet()
+    # Logo
+    logo_path = os.path.join(BASE_DIR, '..', 'static', 'logo.png')
+    elements.append(Image(logo_path, width=100, height=100))
 
-    # 🔹 Absolute paths for logo & photo
-    base_dir = os.path.abspath(os.path.dirname(__file__))
-    logo_path = os.path.join(base_dir, '..', 'static', 'logo.png')
-    student_photo_path = os.path.join(base_dir, '..', 'static', 'uploads', student.photo)
+    elements.append(Spacer(1, 20))
+    
+    # Student photo
+    student_photo_path = os.path.join(BASE_DIR, '..', 'static', 'uploads', student.photo)
+    elements.append(Image(student_photo_path, width=100, height=100))
 
-    if os.path.exists(logo_path):
-        logo = Image(logo_path, width=100, height=100)
-        elements.append(logo)
-        elements.append(Spacer(1, 12))
+    elements.append(Spacer(1, 20))
 
-    if os.path.exists(student_photo_path):
-        photo = Image(student_photo_path, width=150, height=150)
-        elements.append(photo)
-        elements.append(Spacer(1, 12))
+    # Student Name
+    elements.append(Paragraph("Name: {}".format(student.name), style=None))
+    
+    doc.build(elements)
 
-    # Student info
-    elements.append(Paragraph(f"<b>Name:</b> {student.name}", styles['Normal']))
-    elements.append(Paragraph(f"<b>Class:</b> {student.class_name}", styles['Normal']))
-    elements.append(Paragraph(f"<b>ID:</b> {student.id}", styles['Normal']))
-
-    pdf.build(elements)
-
-    buffer.seek(0)
-    response = make_response(buffer.read())
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename=id_card_{student.id}.pdf'
-
-    return response
+    return send_file(pdf_path, as_attachment=True)
